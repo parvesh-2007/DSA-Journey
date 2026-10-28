@@ -3,23 +3,21 @@ class Solution {
         int n = rooms.size();
         boolean[] visited = new boolean[n];
         dfs(rooms, 0, visited);
-        for(boolean x : visited){
-            if(x==false){
+        for(int i = 0; i< n; i++){
+            if(!visited[i]){
                 return false;
             }
+
         }
         return true;
-
-
         
     }
-    public static void dfs(List<List<Integer>> rooms, int source, boolean[] visited){
+    public static void dfs(List<List<Integer>> rooms, int source, boolean[] visited ){
         visited[source] = true;
-        for(int node : rooms.get(source)){
-            if(!visited[node]){
-                dfs(rooms, node, visited);
+        for(int key : rooms.get(source)){
+            if(!visited[key]){
+                dfs(rooms, key, visited);
             }
         }
-
     }
 }
