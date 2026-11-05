@@ -21,7 +21,7 @@ class Solution {
         color[curr] = currColor; // color kardiya curr node ko
         // ab jate adjacent/neigh pe
         for( int v : graph[curr]){
-            if(color[v]== color[curr] && color[v] != -1){
+            if(color[v]== color[curr] ){
                 return false;
             }
                 if(color[v] == -1 ) {     // never colored (nevervisited) collor Nikal lo
