@@ -19,16 +19,16 @@ class Node {
 */
 
 class Solution {
-    HashMap<Node,Node> map = new HashMap<>();
+    HashMap<Node, Node> map = new HashMap<>();
     public Node cloneGraph(Node node) {
         if(node==null){
             return null;
         }
-        map.clear();
         Node clone_node = new Node(node.val);
         map.put(node, clone_node);
         DFS(node, clone_node);
         return clone_node;
+
         
     }
     void DFS(Node node, Node clone_node){
