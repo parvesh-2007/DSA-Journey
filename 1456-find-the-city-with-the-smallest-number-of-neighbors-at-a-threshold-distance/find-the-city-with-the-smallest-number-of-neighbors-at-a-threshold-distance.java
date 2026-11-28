@@ -1,59 +1,82 @@
 
+import java.util.*;
+
 class Solution {
     public int findTheCity(int n, int[][] edges, int distanceThreshold) {
 
-        int[][] dist = new int[n][n];
+        // Step 1: Create adjacency list
+        List<int[]>[] graph = new ArrayList[n];
 
-        // Step 1: Initialize distance matrix
         for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (i == j) {
-                    dist[i][j] = 0;
-                } else {
-                    dist[i][j] = 100000000;
-                }
-            }
+            graph[i] = new ArrayList<>();
         }
 
-        // Step 2: Add edges
         for (int[] edge : edges) {
             int u = edge[0];
             int v = edge[1];
-            int wt = edge[2];
+            int w = edge[2];
 
-            dist[u][v] = wt;
-            dist[v][u] = wt;
+            graph[u].add(new int[]{v, w});
+            graph[v].add(new int[]{u, w});
         }
 
-        // Step 3: Floyd Warshall
-        for (int via = 0; via < n; via++) {
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-
-                    dist[i][j] = Math.min(
-                        dist[i][j],
-                        dist[i][via] + dist[via][j]
-                    );
-                }
-            }
-        }
-
-        // Step 4: Count reachable cities
         int result = -1;
         int minCount = Integer.MAX_VALUE;
 
-        for (int i = 0; i < n; i++) {
+        // Step 2: Run Dijkstra from every city
+        for (int src = 0; src < n; src++) {
+
+            int[] dist = new int[n];
+            Arrays.fill(dist, Integer.MAX_VALUE);
+
+            dist[src] = 0;
+
+            PriorityQueue<int[]> pq = new PriorityQueue<>(
+                (a, b) -> Integer.compare(a[1], b[1])
+            );
+
+            pq.offer(new int[]{src, 0});
+
+            while (!pq.isEmpty()) {
+
+                int[] curr = pq.poll();
+
+                int node = curr[0];
+                int distance = curr[1];
+
+                if (distance > dist[node]) {
+                    continue;
+                }
+
+                for (int[] neighbor : graph[node]) {
+
+                    int nextNode = neighbor[0];
+                    int weight = neighbor[1];
+
+                    int newDist = distance + weight;
+
+                    if (newDist < dist[nextNode]) {
+
+                        dist[nextNode] = newDist;
+
+                        pq.offer(new int[]{nextNode, newDist});
+                    }
+                }
+            }
+
+            // Step 3: Count reachable cities
             int count = 0;
 
-            for (int j = 0; j < n; j++) {
-                if (i != j && dist[i][j] <= distanceThreshold) {
+            for (int i = 0; i < n; i++) {
+                if (i != src && dist[i] <= distanceThreshold) {
                     count++;
                 }
             }
 
+            // Step 4: Find city with minimum count
             if (count <= minCount) {
                 minCount = count;
-                result = i;
+                result = src;
             }
         }
 
